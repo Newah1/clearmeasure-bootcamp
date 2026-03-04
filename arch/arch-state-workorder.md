@@ -10,8 +10,10 @@ stateDiagram-v2
     Draft --> Assigned : DraftToAssignedCommand
 
     Assigned --> InProgress : AssignedToInProgressCommand
+    Assigned --> Cancelled : AssignedToCancelledCommand
 
     InProgress --> Complete : InProgressToCompleteCommand
+    InProgress --> Assigned : InProgressToAssignedCommand
 
-    Complete --> [*]
+    Complete --> Assigned : CompleteToAssignedCommand
 ```
