@@ -3,8 +3,13 @@ namespace ClearMeasure.Bootcamp.Core.Model;
 public class WorkOrder : EntityBase<WorkOrder>
 {
     private string? _description = "";
+    private string? _title = "";
 
-    public string? Title { get; set; } = "";
+    public string? Title
+    {
+        get => _title;
+        set => _title = value?.ToUpperInvariant() ?? "";
+    }
 
     public string? Description
     {

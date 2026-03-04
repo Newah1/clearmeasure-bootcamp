@@ -32,16 +32,14 @@ public class WorkOrderReformatAgentTests
     }
 
     [Test]
-    public void ShouldParseResponseWithOnlyTitleChange()
+    public void ShouldReturnNullWhenOnlyCaseDiffers()
     {
         var workOrder = new WorkOrder { Title = "lowercase title", Description = "Good description." };
         var responseText = "TITLE: Lowercase title\nDESCRIPTION: Good description.";
 
         var result = WorkOrderReformatAgent.ParseResponse(responseText, workOrder);
 
-        result.ShouldNotBeNull();
-        result.Title.ShouldBe("Lowercase title");
-        result.Description.ShouldBe("Good description.");
+        result.ShouldBeNull();
     }
 
     [Test]
@@ -66,21 +64,19 @@ public class WorkOrderReformatAgentTests
         var result = WorkOrderReformatAgent.ParseResponse(responseText, workOrder);
 
         result.ShouldNotBeNull();
-        result.Title.ShouldBe("Original Title");
+        result.Title.ShouldBe("ORIGINAL TITLE");
         result.Description.ShouldBe("New corrected description.");
     }
 
     [Test]
-    public void ShouldDefaultToOriginalDescriptionWhenMissingFromResponse()
+    public void ShouldReturnNullWhenOnlyTitleInResponseMatchesOriginal()
     {
         var workOrder = new WorkOrder { Title = "old title", Description = "Original Description" };
         var responseText = "TITLE: Old title";
 
         var result = WorkOrderReformatAgent.ParseResponse(responseText, workOrder);
 
-        result.ShouldNotBeNull();
-        result.Title.ShouldBe("Old title");
-        result.Description.ShouldBe("Original Description");
+        result.ShouldBeNull();
     }
 
     [Test]
