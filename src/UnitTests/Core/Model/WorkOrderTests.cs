@@ -96,4 +96,14 @@ public class WorkOrderTests
         order.Title = null;
         Assert.That(order.Title, Is.EqualTo(string.Empty));
     }
+
+    [Test]
+    public void ShouldTruncateTitleTo300CharactersAfterUppercasing()
+    {
+        var longTitle = new string('a', 301);
+        var order = new WorkOrder();
+        order.Title = longTitle;
+        Assert.That(order.Title.Length, Is.EqualTo(300));
+        Assert.That(order.Title, Is.EqualTo(new string('A', 300)));
+    }
 }

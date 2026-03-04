@@ -8,7 +8,11 @@ public class WorkOrder : EntityBase<WorkOrder>
     public string? Title
     {
         get => _title;
-        set => _title = value?.ToUpperInvariant() ?? "";
+        set
+        {
+            var upper = value?.ToUpperInvariant() ?? "";
+            _title = upper.Length > 300 ? upper.Substring(0, 300) : upper;
+        }
     }
 
     public string? Description
