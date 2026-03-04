@@ -13,5 +13,5 @@ stateDiagram-v2
 
     InProgress --> Complete : InProgressToCompleteCommand
 
-    Complete --> [*]
+    Complete --> Assigned : CompleteToAssignedCommand
 ```

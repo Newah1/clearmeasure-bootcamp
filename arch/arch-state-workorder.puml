@@ -12,6 +12,6 @@ Assigned --> InProgress : AssignedToInProgressCommand
 
 InProgress --> Complete : InProgressToCompleteCommand
 
-Complete --> [*]
+Complete --> Assigned : CompleteToAssignedCommand
 
 @enduml
