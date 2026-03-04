@@ -5,12 +5,12 @@ using ClearMeasure.Bootcamp.Core.Services;
 namespace ClearMeasure.Bootcamp.Core.Model.StateCommands;
 
 public record CompleteToAssignedCommand(WorkOrder WorkOrder, Employee CurrentUser) : StateCommandBase(WorkOrder,
-CurrentUser)
+    CurrentUser)
 {
-    public const string Name = "Reassign";
+    public const string Name = "Reopen";
     public override string TransitionVerbPresentTense => Name;
 
-    public override string TransitionVerbPastTense => "Reassigned";
+    public override string TransitionVerbPastTense => "Reopened";
 
     public override WorkOrderStatus GetBeginStatus()
     {

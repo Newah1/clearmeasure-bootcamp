@@ -20,7 +20,7 @@ public class WorkOrderCompleteTests : AcceptanceTestBase
         order = await BeginExistingWorkOrder(order);
         order = await ClickWorkOrderNumberFromSearchPage(order);
 
-        var expectedTitle = "Title from automation";
+        var expectedTitle = "TITLE FROM AUTOMATION";
         var expectedDescription = "Description";
         order.Title = expectedTitle;
         order.Description = expectedDescription;
@@ -69,7 +69,9 @@ public class WorkOrderCompleteTests : AcceptanceTestBase
                              throw new InvalidOperationException();
         rehyratedOrder.Status.ShouldBe(WorkOrderStatus.Complete);
 
-        var reassignButtonTestId = nameof(WorkOrderManage.Elements.CommandButton) + CompleteToAssignedCommand.Name;
-        await Expect(Page.GetByTestId(reassignButtonTestId)).ToBeVisibleAsync();
+        // Creator now has a valid "Reopen" command on a completed work order,
+        // so the page shows action buttons instead of the read-only message.
+        await Expect(Page.GetByTestId(nameof(WorkOrderManage.Elements.CommandButton) + CompleteToAssignedCommand.Name))
+            .ToBeVisibleAsync();
     }
 }

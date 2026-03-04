@@ -75,8 +75,10 @@ public class WorkOrderSpeechTests : AcceptanceTestBase
         order = await CompleteExistingWorkOrder(order);
         order = await ClickWorkOrderNumberFromSearchPage(order);
 
-        var reassignButtonTestId = nameof(WorkOrderManage.Elements.CommandButton) + CompleteToAssignedCommand.Name;
-        await Expect(Page.GetByTestId(reassignButtonTestId)).ToBeVisibleAsync();
+        // Creator now has a valid "Reopen" command on a completed work order,
+        // so the page shows action buttons instead of the read-only message.
+        await Expect(Page.GetByTestId(nameof(WorkOrderManage.Elements.CommandButton) + CompleteToAssignedCommand.Name))
+            .ToBeVisibleAsync();
         await Expect(Page.GetByTestId(nameof(WorkOrderManage.Elements.SpeakTitle))).ToBeVisibleAsync();
         await Expect(Page.GetByTestId(nameof(WorkOrderManage.Elements.SpeakDescription))).ToBeVisibleAsync();
     }

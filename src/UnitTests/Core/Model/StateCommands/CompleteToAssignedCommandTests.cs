@@ -27,10 +27,9 @@ public class CompleteToAssignedCommandTests : StateCommandBaseTests
         var order = new WorkOrder();
         order.Status = WorkOrderStatus.Complete;
         var employee = new Employee();
-        var differentEmployee = new Employee();
         order.Creator = employee;
 
-        var command = new CompleteToAssignedCommand(order, differentEmployee);
+        var command = new CompleteToAssignedCommand(order, new Employee());
         Assert.That(command.IsValid(), Is.False);
     }
 
@@ -52,7 +51,7 @@ public class CompleteToAssignedCommandTests : StateCommandBaseTests
         var order = new WorkOrder();
         order.Number = "123";
         order.Status = WorkOrderStatus.Complete;
-        order.CompletedDate = new DateTime(2026, 1, 15);
+        order.CompletedDate = DateTime.UtcNow;
         var employee = new Employee();
         order.Creator = employee;
 
@@ -71,17 +70,17 @@ public class CompleteToAssignedCommandTests : StateCommandBaseTests
 
         var command = new CompleteToAssignedCommand(order, employee);
 
-        Assert.That(command.TransitionVerbPresentTense, Is.EqualTo("Reassign"));
-        Assert.That(command.TransitionVerbPastTense, Is.EqualTo("Reassigned"));
+        Assert.That(command.TransitionVerbPresentTense, Is.EqualTo("Reopen"));
+        Assert.That(command.TransitionVerbPastTense, Is.EqualTo("Reopened"));
     }
 
     [Test]
-    public void ShouldEmitBotEventWhenReassignedToBot()
+    public void ShouldEmitBotEventWhenReopenedToBot()
     {
         var order = new WorkOrder();
         order.Number = "456";
         order.Status = WorkOrderStatus.Complete;
-        order.CompletedDate = new DateTime(2026, 1, 15);
+        order.CompletedDate = DateTime.UtcNow;
         var creator = new Employee();
         order.Creator = creator;
 
@@ -96,12 +95,12 @@ public class CompleteToAssignedCommandTests : StateCommandBaseTests
     }
 
     [Test]
-    public void ShouldNotEmitBotEventWhenReassignedToNonBot()
+    public void ShouldNotEmitBotEventWhenReopenedToNonBot()
     {
         var order = new WorkOrder();
         order.Number = "789";
         order.Status = WorkOrderStatus.Complete;
-        order.CompletedDate = new DateTime(2026, 1, 15);
+        order.CompletedDate = DateTime.UtcNow;
         var creator = new Employee();
         order.Creator = creator;
 
