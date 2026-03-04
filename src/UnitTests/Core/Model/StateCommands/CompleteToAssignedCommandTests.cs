@@ -1,4 +1,6 @@
 using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model.Constants;
+using ClearMeasure.Bootcamp.Core.Model.Events;
 using ClearMeasure.Bootcamp.Core.Model.StateCommands;
 using ClearMeasure.Bootcamp.Core.Services;
 
@@ -71,6 +73,45 @@ public class CompleteToAssignedCommandTests : StateCommandBaseTests
 
         Assert.That(command.TransitionVerbPresentTense, Is.EqualTo("Reassign"));
         Assert.That(command.TransitionVerbPastTense, Is.EqualTo("Reassigned"));
+    }
+
+    [Test]
+    public void ShouldEmitBotEventWhenReassignedToBot()
+    {
+        var order = new WorkOrder();
+        order.Number = "456";
+        order.Status = WorkOrderStatus.Complete;
+        order.CompletedDate = new DateTime(2026, 1, 15);
+        var creator = new Employee();
+        order.Creator = creator;
+
+        var botEmployee = new Employee();
+        botEmployee.AddRole(new Role(Roles.Bot, false, true));
+        order.Assignee = botEmployee;
+
+        var command = new CompleteToAssignedCommand(order, creator);
+        command.Execute(new StateCommandContext());
+
+        Assert.That(command.StateTransitionEvent, Is.InstanceOf<WorkOrderAssignedToBotEvent>());
+    }
+
+    [Test]
+    public void ShouldNotEmitBotEventWhenReassignedToNonBot()
+    {
+        var order = new WorkOrder();
+        order.Number = "789";
+        order.Status = WorkOrderStatus.Complete;
+        order.CompletedDate = new DateTime(2026, 1, 15);
+        var creator = new Employee();
+        order.Creator = creator;
+
+        var regularEmployee = new Employee();
+        order.Assignee = regularEmployee;
+
+        var command = new CompleteToAssignedCommand(order, creator);
+        command.Execute(new StateCommandContext());
+
+        Assert.That(command.StateTransitionEvent, Is.Null);
     }
 
     protected override StateCommandBase GetStateCommand(WorkOrder order, Employee employee)

@@ -71,6 +71,7 @@ public partial class WorkOrderManage : AppComponentBase
         Model = CreateViewModel(CurrentMode, workOrder);
         var commandList = new StateCommandList();
         Model.IsReadOnly = !commandList!.GetValidStateCommands(workOrder, currentUser).Any();
+        Model.AreFieldsReadOnly = Model.IsReadOnly || workOrder.Status == WorkOrderStatus.Complete;
         ValidCommands = commandList.GetValidStateCommands(workOrder, currentUser);
         _workOrder = workOrder;
 
