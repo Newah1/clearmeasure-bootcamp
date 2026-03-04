@@ -46,7 +46,7 @@ public class WorkOrderTests
         workOrder.Assignee = assignee;
 
         Assert.That(workOrder.Id, Is.EqualTo(guid));
-        Assert.That(workOrder.Title, Is.EqualTo("Title"));
+        Assert.That(workOrder.Title, Is.EqualTo("TITLE"));
         Assert.That(workOrder.Description, Is.EqualTo("Description"));
         Assert.That(workOrder.Status, Is.EqualTo(WorkOrderStatus.Complete));
         Assert.That(workOrder.Number, Is.EqualTo("Number"));
@@ -79,5 +79,31 @@ public class WorkOrderTests
         order.Status = WorkOrderStatus.Draft;
         order.ChangeStatus(WorkOrderStatus.Assigned);
         Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Assigned));
+    }
+
+    [Test]
+    public void ShouldUppercaseTitleOnSet()
+    {
+        var order = new WorkOrder();
+        order.Title = "lowercase title";
+        Assert.That(order.Title, Is.EqualTo("LOWERCASE TITLE"));
+    }
+
+    [Test]
+    public void ShouldHandleNullTitleBySettingEmpty()
+    {
+        var order = new WorkOrder();
+        order.Title = null;
+        Assert.That(order.Title, Is.EqualTo(string.Empty));
+    }
+
+    [Test]
+    public void ShouldTruncateTitleTo300CharactersAfterUppercasing()
+    {
+        var longTitle = new string('a', 301);
+        var order = new WorkOrder();
+        order.Title = longTitle;
+        Assert.That(order.Title.Length, Is.EqualTo(300));
+        Assert.That(order.Title, Is.EqualTo(new string('A', 300)));
     }
 }
