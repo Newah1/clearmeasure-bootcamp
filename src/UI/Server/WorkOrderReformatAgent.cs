@@ -20,15 +20,17 @@ public class WorkOrderReformatAgent(
     {
         try
         {
+            var assigneePreferredLanguage = workOrder.Assignee?.PreferredLanguage ?? "en-US";
             var chatClient = await chatClientFactory.GetChatClient();
 
-            var systemPrompt = """
-                               You are an AI agent responsible for reformatting work order fields.
+            var systemPrompt = $"""
+                               You are an AI agent responsible for reformatting and translating work order fields.
                                You will receive a work order title and description.
 
                                Your tasks:
-                               1. Correct the description for grammar and punctuation. Do not change the meaning.
-                               2. Ensure the title starts with a capital letter. Do not change anything else about the title.
+                               1. Translate the description into the assignee's preferred language, which in this case is {assigneePreferredLanguage}.
+                               2. Correct the description for grammar and punctuation. Do not change the meaning.
+                               3. Ensure the title starts with a capital letter. Do not change anything else about the title.
 
                                If no changes are needed, respond with exactly: NO_CHANGES
 
@@ -39,7 +41,8 @@ public class WorkOrderReformatAgent(
 
             var workOrderInfo = $"""
                                  Title: {workOrder.Title}
-                                 Description: {workOrder.Description}
+                                 Description: {workOrder.Description},
+                                 PreferredLanguage: {assigneePreferredLanguage}
                                  """;
 
             var messages = new List<ChatMessage>
