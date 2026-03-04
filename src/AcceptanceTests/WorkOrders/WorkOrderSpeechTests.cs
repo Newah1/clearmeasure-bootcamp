@@ -59,7 +59,7 @@ public class WorkOrderSpeechTests : AcceptanceTestBase
     }
 
     [Test, Retry(2)]
-    public async Task ShouldShowSpeakButtonsOnReadOnlyWorkOrder()
+    public async Task ShouldShowSpeakButtonsOnCompletedWorkOrder()
     {
         await LoginAsCurrentUser();
 

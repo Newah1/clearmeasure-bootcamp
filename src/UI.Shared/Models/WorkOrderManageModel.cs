@@ -22,6 +22,8 @@ public class WorkOrderManageModel
 
     public bool IsReadOnly { get; set; }
 
+    public bool AreFieldsReadOnly { get; set; }
+
     public string? AssignedDate { get; set; }
 
     public string? CompletedDate { get; set; }

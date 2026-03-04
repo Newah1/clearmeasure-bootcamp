@@ -1,4 +1,6 @@
 using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model.Constants;
+using ClearMeasure.Bootcamp.Core.Model.Events;
 using ClearMeasure.Bootcamp.Core.Model.StateCommands;
 using ClearMeasure.Bootcamp.Core.Services;
 
@@ -58,6 +60,57 @@ public class CompleteToAssignedCommandTests : StateCommandBaseTests
 
         Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Assigned));
         Assert.That(order.CompletedDate, Is.Null);
+    }
+
+    [Test]
+    public void ShouldHaveCorrectTransitionVerbs()
+    {
+        var order = new WorkOrder();
+        var employee = new Employee();
+
+        var command = new CompleteToAssignedCommand(order, employee);
+
+        Assert.That(command.TransitionVerbPresentTense, Is.EqualTo("Reopen"));
+        Assert.That(command.TransitionVerbPastTense, Is.EqualTo("Reopened"));
+    }
+
+    [Test]
+    public void ShouldEmitBotEventWhenReopenedToBot()
+    {
+        var order = new WorkOrder();
+        order.Number = "456";
+        order.Status = WorkOrderStatus.Complete;
+        order.CompletedDate = DateTime.UtcNow;
+        var creator = new Employee();
+        order.Creator = creator;
+
+        var botEmployee = new Employee();
+        botEmployee.AddRole(new Role(Roles.Bot, false, true));
+        order.Assignee = botEmployee;
+
+        var command = new CompleteToAssignedCommand(order, creator);
+        command.Execute(new StateCommandContext());
+
+        Assert.That(command.StateTransitionEvent, Is.InstanceOf<WorkOrderAssignedToBotEvent>());
+    }
+
+    [Test]
+    public void ShouldNotEmitBotEventWhenReopenedToNonBot()
+    {
+        var order = new WorkOrder();
+        order.Number = "789";
+        order.Status = WorkOrderStatus.Complete;
+        order.CompletedDate = DateTime.UtcNow;
+        var creator = new Employee();
+        order.Creator = creator;
+
+        var regularEmployee = new Employee();
+        order.Assignee = regularEmployee;
+
+        var command = new CompleteToAssignedCommand(order, creator);
+        command.Execute(new StateCommandContext());
+
+        Assert.That(command.StateTransitionEvent, Is.Null);
     }
 
     protected override StateCommandBase GetStateCommand(WorkOrder order, Employee employee)
